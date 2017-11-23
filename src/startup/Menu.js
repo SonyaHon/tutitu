@@ -228,3 +228,6 @@ MenuTab.prototype.createList = function (param, val, props) {
     elem.appendChild(value);
     this.ctx.appendChild(elem);
 }
+
+//TODO: change size of menu-content to fir area
+//TODO: finish up the list type of input 
