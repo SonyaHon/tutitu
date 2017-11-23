@@ -1,4 +1,4 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import fs from 'fs';
 
 let mainWindow;
@@ -28,8 +28,16 @@ app.on('window-all-closed', () => {
   }
 });
 
+app.on('browser-window-created', function(evt, window) {
+  window.setMenu(null);
+});
+
 app.on('activate', () => {
   if (mainWindow === null) {
     createWindow();
   }
 });
+
+ipcMain.on('getconfig', function(evt, arg) {
+  evt.returnValue = JSON.stringify(config);
+}); 

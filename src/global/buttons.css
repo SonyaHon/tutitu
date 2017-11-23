@@ -1,15 +1,29 @@
-.Button-Big {
-    border-radius: 10px;
-    outline: none;
-    color: white;
-    background-color:rgb(68, 120, 224);
-    font-size: 20px;
-    padding: 10px 25px;
-    text-align: center;
-    box-shadow: none;   
-    border: none;
+.Button {
     text-transform: uppercase;
+    border: none;
+    background-color: transparent;
+    color: #2196F3;
+    outline: none;
+    transition: background 0.1s linear;
+    margin: 10px;
 }
-.Button-Big:hover {
+.Button-Accent {
+    color:  #ec407a;
+}
+.Button:hover {
     cursor: pointer;
+    background-color: rgba(20, 77, 100, 0.1);
 }
+.Button:active {
+    background-color: rgba(20, 77, 100, 0.2);
+}
+.Button:disabled {
+    background-color: transparent;
+    color: lightgrey;
+}
+
+.Button-Big {
+    font-size: 20px;
+    border-radius: 5px;
+    padding: 10px 25px;
+ }

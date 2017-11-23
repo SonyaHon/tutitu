@@ -1,4 +1,60 @@
 {
-    "window_width": 100,
-    "window_height": 100
+    "test-stuff": {
+        "param1": {
+            "value": true,
+            "type": "switch"   
+        },
+        "param2": {
+            "value": 50,
+            "type": "slider",
+            "props": {
+                "from": 0,
+                "to": 100,
+                "step": 1
+            }
+        },
+        "param3": {
+            "value": 0,
+            "type": "list",
+            "props": {
+                "data": ["Moscow", "London", "Kiev"]
+            }
+        },
+        "param4": {
+            "value": 125,
+            "type": "input|num"
+        },
+        "param5": {
+            "value": "hello world!",
+            "type": "input|string"
+        },
+        "param6": {
+            "value": true,
+            "type": "switch"   
+        },
+        "param7": {
+            "value": 50,
+            "type": "slider",
+            "props": {
+                "from": 0,
+                "to": 100,
+                "step": 1
+            }
+        },
+        "param8": {
+            "value": 0,
+            "type": "list",
+            "props": {
+                "data": ["Moscow", "London", "Kiev"]
+            }
+        },
+        "param9": {
+            "value": 125,
+            "type": "input|num"
+        },
+        "param10": {
+            "value": "hello world!",
+            "type": "input|string"
+        }
+    }
 }
