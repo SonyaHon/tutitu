@@ -1,0 +1,15 @@
+.Button-Big {
+    border-radius: 10px;
+    outline: none;
+    color: white;
+    background-color:rgb(68, 120, 224);
+    font-size: 20px;
+    padding: 10px 25px;
+    text-align: center;
+    box-shadow: none;   
+    border: none;
+    text-transform: uppercase;
+}
+.Button-Big:hover {
+    cursor: pointer;
+}
