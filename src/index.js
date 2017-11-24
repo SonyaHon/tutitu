@@ -9,7 +9,8 @@ config = JSON.parse(config);
 const createWindow = () => {
   mainWindow = new BrowserWindow({
     width: 800,
-    height: 600
+    height: 600,
+    useContentSize: true
   });
 
   mainWindow.loadURL(`file://${__dirname}/startup/starter.html`);
@@ -35,6 +36,7 @@ app.on('browser-window-created', function(evt, window) {
 app.on('activate', () => {
   if (mainWindow === null) {
     createWindow();
+    mainWindow.setResizable(false);
   }
 });
 

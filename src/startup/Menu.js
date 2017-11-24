@@ -197,10 +197,8 @@ MenuTab.prototype.createList = function (param, val, props) {
     var value = document.createElement('span');
     value.className = 'Menu-Prop-value';
 
-    let label = document.createElement('span');
-    label.className = 'Menu-Prop-List-Label';
-    label.innerText = props.data[val];    
-    value.appendChild(label);
+    let list = new List(val, props.data);
+    value.appendChild(list.el);
 
     let btn = document.createElement('i');
     btn.className = 'material-icons Menu-Prop-List-Btn Menu-Prop-List-Btn-Unchecked';
@@ -213,14 +211,12 @@ MenuTab.prototype.createList = function (param, val, props) {
         if(btn.toggled) {
             btn.classList.add('Menu-Prop-List-Btn-Checked');
             btn.classList.remove('Menu-Prop-List-Btn-Unchecked');
-            label.classList.add('Menu-Prop-List-Shown');
-            label.classList.remove('Menu-Prop-List-Hidden');     
+            list.show();
         }
         else {
             btn.classList.remove('Menu-Prop-List-Btn-Checked');
             btn.classList.add('Menu-Prop-List-Btn-Unchecked');
-            label.classList.remove('Menu-Prop-List-Shown');
-            label.classList.add('Menu-Prop-List-Hidden');     
+            list.close();
         }
     });
 
@@ -229,5 +225,60 @@ MenuTab.prototype.createList = function (param, val, props) {
     this.ctx.appendChild(elem);
 }
 
-//TODO: change size of menu-content to fir area
+function List(val, props) {
+    this.max_elems = 7;
+    this.el = document.createElement('div');
+    this.el.className = 'List List-Collapsed';
+
+    this.labels = [];
+
+    this.toggled = false;
+    this.choosen = val;
+    this.props = props;
+
+    this.heightOfTheBox = props.length < this.max_elems ? props.length : this.max_elems;
+    this.createLabel(this.props[this.choosen]);
+    this.el.appendChild(this.labels[0]);
+}
+List.prototype.listLableCallback = function() {}
+
+List.prototype.createLabel = function(text) {
+    let lable = document.createElement('div');
+    lable.className = 'List-Label List-Lable-Inline';
+    lable.innerText = text;
+    this.labels.push(lable);
+}
+
+List.prototype.show = function() {
+    // create new labels
+    this.labels = [];
+    this.el.innerHTML = "";
+    this.el.classList.remove('List-Collapsed');
+    this.el.classList.add('List-Shown');
+    console.log(this.choosen);
+    for(var i = 0; i < this.heightOfTheBox; i++) {
+        this.createLabel(this.props[i]);
+        this.el.appendChild(this.labels[i]);
+        this.labels[i].classList.remove('List-Lable-Inline');
+        this.labels[i].classList.add('List-Lable-Unchoosed');
+        if(i === this.choosen) {
+            this.labels[i].classList.remove('List-Lable-Unchoosed');
+            this.labels[i].classList.add('List-Lable-Choosed');   
+        }
+    }
+
+    // count how much up or down i need to go
+    
+
+}
+
+List.prototype.close = function() {
+
+    this.labels = [];
+    this.el.innerHTML = "";
+    this.el.classList.add('List-Collapsed');
+    this.el.classList.remove('List-Shown');
+    this.createLabel(this.props[this.choosen]);
+    this.el.appendChild(this.labels[0]);
+}
 //TODO: finish up the list type of input 

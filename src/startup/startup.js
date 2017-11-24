@@ -2,7 +2,7 @@ var tabs = document.querySelector('.tabs');
 var content = document.querySelector('.tab_content');
 var {ipcRenderer} = require('electron');
 
-
+content.style.height = (window.innerHeight - 41) + 'px'
 
 var tabsbar = new TabBar(tabs, content);
 
