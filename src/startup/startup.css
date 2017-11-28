@@ -237,7 +237,13 @@ body, html {
 }
 
 .List-Label {
-    
+    padding: 5px;
+    transition: background 0.1s linear, opacity 0.1s linear;
+}
+.List-Shown .List-Label:hover {
+    background-color: #2196F3;
+    opacity: 0.5;
+    cursor: pointer;
 }
 
 .List-Lable-Inline {

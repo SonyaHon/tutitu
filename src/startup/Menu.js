@@ -197,13 +197,15 @@ MenuTab.prototype.createList = function (param, val, props) {
     var value = document.createElement('span');
     value.className = 'Menu-Prop-value';
 
-    let list = new List(val, props.data);
-    value.appendChild(list.el);
-
     let btn = document.createElement('i');
     btn.className = 'material-icons Menu-Prop-List-Btn Menu-Prop-List-Btn-Unchecked';
     btn.innerText = 'more_horiz';
     btn.toggled = false;
+
+    let list = new List(val, props.data, btn);
+    value.appendChild(list.el);
+
+    
     value.appendChild(btn);
 
     btn.addEventListener('click', function() {
@@ -225,12 +227,14 @@ MenuTab.prototype.createList = function (param, val, props) {
     this.ctx.appendChild(elem);
 }
 
-function List(val, props) {
+function List(val, props, menu_btn) {
     this.max_elems = 7;
     this.el = document.createElement('div');
     this.el.className = 'List List-Collapsed';
 
     this.labels = [];
+
+    this.close_btn = menu_btn;
 
     this.toggled = false;
     this.choosen = val;
@@ -265,15 +269,20 @@ List.prototype.show = function() {
             this.labels[i].classList.remove('List-Lable-Unchoosed');
             this.labels[i].classList.add('List-Lable-Choosed');   
         }
+        else {
+            let idx = i;
+            this.labels[i].addEventListener('click', function(evt) {
+                this.choosen = idx;
+                this.close_btn.click();
+            }.bind(this))
+        }
     }
 
     // count how much up or down i need to go
-    
 
 }
 
 List.prototype.close = function() {
-
     this.labels = [];
     this.el.innerHTML = "";
     this.el.classList.add('List-Collapsed');
