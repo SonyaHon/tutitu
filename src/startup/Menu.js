@@ -18,7 +18,30 @@ function MenuOfChangeableProps(el, config) {
         this.categories.push(ntab);
         this.menu.appendChild(ntab.el);
     }
+
+    var submitButt = document.createElement('button');
+    submitButt.className = 'Button';
+    submitButt.innerText = "Submit Changes";
+    submitButt.addEventListener('click', function() {
+        this.submitChanges();
+    }.bind(this));
+    this.menu.appendChild(submitButt);
+
     this.on(0);
+}
+
+MenuOfChangeableProps.prototype.getNewConfig = function() {
+    var nConfig = {};
+    var oldConf = this.config;
+    this.categories.forEach(function(elem) {
+       nConfig[elem.conf_name] = oldConf[elem.conf_name];
+    });
+    return nConfig;
+}
+
+MenuOfChangeableProps.prototype.submitChanges = function() {
+    console.log('Old config:', this.config);
+    console.log('New config', this.getNewConfig());
 }
 
 MenuOfChangeableProps.prototype.changeCtx = function(idx) {
@@ -40,6 +63,7 @@ MenuOfChangeableProps.prototype.on = function(arg) {
 }
 
 function MenuTab(title, idx, config, listener) {
+    this.conf_name = title;
     this.el = document.createElement('div');
     this.el.className = 'Menu-Tab';
     this.title = document.createElement('span');
@@ -52,6 +76,7 @@ function MenuTab(title, idx, config, listener) {
     this.el.addEventListener('click', function() {
         this.fire(this.idx);
     }.bind(this));
+
     this.createCtx();
 }
 
