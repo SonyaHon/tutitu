@@ -1,3 +1,5 @@
+var {ipcRenderer} = require('electron');
+
 function MenuOfChangeableProps(el, config) {
     this.el = el;
     this.config = config;
@@ -19,13 +21,14 @@ function MenuOfChangeableProps(el, config) {
         this.menu.appendChild(ntab.el);
     }
 
-    var submitButt = document.createElement('button');
-    submitButt.className = 'Button';
-    submitButt.innerText = "Submit Changes";
-    submitButt.addEventListener('click', function() {
+    this.submitButt = document.createElement('button');
+    this.submitButt.className = 'Button';
+    this.submitButt.innerText = "No changes yet";
+    this.submitButt.disabled = true;
+    this.submitButt.addEventListener('click', function() {
         this.submitChanges();
     }.bind(this));
-    this.menu.appendChild(submitButt);
+    this.menu.appendChild(this.submitButt);
 
     this.on(0);
 }
@@ -34,14 +37,43 @@ MenuOfChangeableProps.prototype.getNewConfig = function() {
     var nConfig = {};
     var oldConf = this.config;
     this.categories.forEach(function(elem) {
-       nConfig[elem.conf_name] = oldConf[elem.conf_name];
+        nConfig[elem.conf_name] = oldConf[elem.conf_name];
+        for(var prop in nConfig[elem.conf_name]) {
+           var type = nConfig[elem.conf_name][prop].type;
+           switch(type) {
+                case 'switch': 
+                nConfig[elem.conf_name][prop].value = elem.props[prop].checked;
+
+                break;
+                case 'slider':
+                    nConfig[elem.conf_name][prop].value = parseFloat(elem.props[prop].value);
+                break;
+                case 'list':
+                    nConfig[elem.conf_name][prop].value = elem.props[prop].choosen;
+                break;
+                case 'input|num':
+                    nConfig[elem.conf_name][prop].value = parseFloat(elem.props[prop].value);
+                break;
+                case 'input|string':
+                    nConfig[elem.conf_name][prop].value = elem.props[prop].value;
+                break;
+           }
+
+        }
     });
     return nConfig;
 }
 
 MenuOfChangeableProps.prototype.submitChanges = function() {
+    var nconf = this.getNewConfig();
     console.log('Old config:', this.config);
-    console.log('New config', this.getNewConfig());
+    console.log('New config', nconf);
+    var ans = ipcRenderer.sendSync('newConfig', nconf);
+    if (ans === 'OK') {
+        this.submitButt.innerText = 'Changes saved';
+        this.submitButt.disabled = true;
+    } 
+    
 }
 
 MenuOfChangeableProps.prototype.changeCtx = function(idx) {
@@ -87,7 +119,7 @@ MenuTab.prototype.fire = function(idx) {
 MenuTab.prototype.createCtx = function() {
     this.ctx = document.createElement('div');
     this.ctx.className = 'Menu-Tab_content';
-    this.props = [];
+    this.props = {};
     
     for(var param in this.config) {
         var obj = this.config[param];
@@ -95,10 +127,10 @@ MenuTab.prototype.createCtx = function() {
             this.createSwitch(param, obj.value);
         }
         else if(obj.type === 'slider') {
-           this.createSlider(param, obj.value, obj.props);
+            this.createSlider(param, obj.value, obj.props);
         }
         else if(obj.type.match(/input\|(.*)/)) {
-            this.createInput(param, obj.value, obj.type.match(/input\|(.*)/)[1]);
+           this.createInput(param, obj.value, obj.type.match(/input\|(.*)/)[1]);
         }
         else if(obj.type === 'list') {
             this.createList(param, obj.value, obj.props);
@@ -126,7 +158,12 @@ MenuTab.prototype.createSwitch = function (param, val) {
     switc.appendChild(input);
     switc.appendChild(sld);
     input.checked = val;
+    input.addEventListener('change', function() {
+        this.listener.submitButt.innerText = 'submit changes';
+        this.listener.submitButt.disabled = false;
+    }.bind(this));
     this.ctx.appendChild(elem);
+    this.props[param] = input;
 }
 
 MenuTab.prototype.createInput = function (param, val, type) {
@@ -153,7 +190,9 @@ MenuTab.prototype.createInput = function (param, val, type) {
         minus.innerText = 'remove';
         minus.addEventListener('click', function() {
             input.value = Number(input.value) - 1;
-        });
+            this.listener.submitButt.innerText = 'submit changes';
+            this.listener.submitButt.disabled = false;
+        }.bind(this));
         valuecompound.appendChild(minus);
 
         input.type = 'number'
@@ -165,7 +204,9 @@ MenuTab.prototype.createInput = function (param, val, type) {
         plus.innerText = 'add';
         plus.addEventListener('click', function() {
             input.value = Number(input.value) + 1;
-        });
+            this.listener.submitButt.innerText = 'submit changes';
+            this.listener.submitButt.disabled = false;
+        }.bind(this));
         valuecompound.appendChild(plus);
         
     }
@@ -176,10 +217,16 @@ MenuTab.prototype.createInput = function (param, val, type) {
 
     input.value = val;
 
+    input.addEventListener('input', function() {
+        this.listener.submitButt.innerText = 'submit changes';
+        this.listener.submitButt.disabled = false;
+    }.bind(this));
+
     value.appendChild(valuecompound);
     elem.appendChild(name);
     elem.appendChild(value);
     this.ctx.appendChild(elem);
+    this.props[param] = input;
 }
 
 MenuTab.prototype.createSlider = function (param, val, props) {
@@ -206,11 +253,14 @@ MenuTab.prototype.createSlider = function (param, val, props) {
     value.appendChild(t2);
     input.addEventListener('input', function() {
        t2.innerText = input.value; 
-    });
+       this.listener.submitButt.innerText = 'submit changes';
+       this.listener.submitButt.disabled = false;
+    }.bind(this));
 
     elem.appendChild(name);
     elem.appendChild(value);
     this.ctx.appendChild(elem);
+    this.props[param] = input;
 }
 
 MenuTab.prototype.createList = function (param, val, props) {
@@ -244,12 +294,15 @@ MenuTab.prototype.createList = function (param, val, props) {
             btn.classList.remove('Menu-Prop-List-Btn-Checked');
             btn.classList.add('Menu-Prop-List-Btn-Unchecked');
             list.close();
+            this.listener.submitButt.innerText = 'submit changes';
+            this.listener.submitButt.disabled = false;
         }
-    });
+    }.bind(this));
 
     elem.appendChild(name);
     elem.appendChild(value);
     this.ctx.appendChild(elem);
+    this.props[param] = list;
 }
 
 function List(val, props, menu_btn) {
@@ -315,4 +368,3 @@ List.prototype.close = function() {
     this.createLabel(this.props[this.choosen]);
     this.el.appendChild(this.labels[0]);
 }
-//TODO: finish up the list type of input 

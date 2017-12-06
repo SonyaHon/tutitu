@@ -43,3 +43,10 @@ app.on('activate', () => {
 ipcMain.on('getconfig', function(evt, arg) {
   evt.returnValue = JSON.stringify(config);
 }); 
+
+ipcMain.on('newConfig', function(evt, arg) {
+
+  var str = JSON.stringify(arg);
+  fs.writeFileSync('./src/config.json', str);
+  evt.returnValue = "OK";
+});
