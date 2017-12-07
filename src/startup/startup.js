@@ -22,10 +22,10 @@ exbtn.className = 'Button Button-Big Button-Accent';
 start.appendChild(exbtn);
 
 stbtn.addEventListener('click', function() {
-    console.log('App launched');
+    ipcRenderer.sendSync('startApp');
 });
 exbtn.addEventListener('click', function() {
-    console.log('Exit App');
+    ipcRenderer.sendSync('exitApp');
 });
 
 tabsbar.addTab('Launch', start);

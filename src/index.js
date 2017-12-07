@@ -14,9 +14,6 @@ const createWindow = () => {
   });
 
   mainWindow.loadURL(`file://${__dirname}/startup/starter.html`);
-
-  mainWindow.webContents.openDevTools();
-
   mainWindow.on('closed', () => {
         mainWindow = null;
   });
@@ -49,4 +46,34 @@ ipcMain.on('newConfig', function(evt, arg) {
   var str = JSON.stringify(arg);
   fs.writeFileSync('./src/config.json', str);
   evt.returnValue = "OK";
+});
+
+ipcMain.on('exitApp', function(evt, arg) {
+  app.quit();
+});
+
+ipcMain.on('startApp', function(evt, arg) {
+
+  mainWindow.hide();
+  var config = JSON.parse(fs.readFileSync('./src/config.json'));
+  config = config.window;
+
+
+  // U can get ur window prefs here from config.window
+  mainWindow = new BrowserWindow({
+    width: config.width.value,
+    height: config.height.value,
+    useContentSize: true
+  }); 
+
+  mainWindow.loadURL(`file://${__dirname}/main/index.html`);
+  mainWindow.webContents.openDevTools();
+
+  // U can send the new loading config parts to not shown page.
+
+  mainWindow.show();
+  mainWindow.on('closed', () => {
+    mainWindow = null;
+});
+
 });
