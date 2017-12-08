@@ -41,6 +41,11 @@ ipcMain.on('getconfig', function(evt, arg) {
   evt.returnValue = JSON.stringify(config);
 }); 
 
+ipcMain.on('getplayerdata', function(evt, arg) {
+  var dt = fs.readFileSync('./src/player_data.json');
+  evt.returnValue = JSON.stringify(JSON.parse(dt));
+}); 
+
 ipcMain.on('newConfig', function(evt, arg) {
 
   var str = JSON.stringify(arg);
@@ -60,9 +65,16 @@ ipcMain.on('startApp', function(evt, arg) {
 
 
   // U can get ur window prefs here from config.window
+
+  var screen = config['window-resolution']
+  screen = screen.props.data[screen.value].split(' x ');
+  
+
   mainWindow = new BrowserWindow({
-    width: config.width.value,
-    height: config.height.value,
+    width: parseInt(screen[0]),
+    height: parseInt(screen[1]),
+    fullscreen: config.fullscreen.value,
+    resizable: false,  
     useContentSize: true
   }); 
 
