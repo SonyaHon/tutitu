@@ -8,7 +8,24 @@ var current_player_data = {
         level: 0,
         reputation: 0,
         upgrades: [],
-        stock: {maxCap: 100, freeSps: 100, st: []}
+        stock: {max_capacity: 100, filled_space: 0, items: [
+            {item: ITEMS.tets_item, amount: 2},
+            {item: ITEMS.tets_item, amount: 2},
+            {item: ITEMS.tets_item, amount: 2},
+            {item: ITEMS.tets_item, amount: 2},
+            {item: ITEMS.tets_item, amount: 2},
+            {item: ITEMS.tets_item, amount: 2},
+            {item: ITEMS.tets_item, amount: 2},
+            {item: ITEMS.tets_item, amount: 2},
+            {item: ITEMS.tets_item, amount: 2},
+            {item: ITEMS.tets_item, amount: 2},
+            {item: ITEMS.tets_item, amount: 2},
+            {item: ITEMS.tets_item, amount: 2},
+            {item: ITEMS.tets_item, amount: 2},
+            {item: ITEMS.tets_item, amount: 2},
+            {item: ITEMS.tets_item, amount: 2},
+            {item: ITEMS.tets_item, amount: 2}
+        ]}
     }
 }
 

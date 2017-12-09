@@ -15,7 +15,7 @@ html, body {
 
 #player {
     width: calc(30% - 2px);
-    height: calc(100% - 2em);
+    height: calc(100% - 2em - 10px);
 }
 
 #ctxarea {
@@ -34,12 +34,14 @@ html, body {
     width: 100%;
     height: 100%;
     padding: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
 }
 
 .player-stats {
     display: flex;
     flex-direction: column;
-    box-shadow: 2px 2px 39px -8px rgba(0,0,0,0.75);
     padding: 5px;
     width: calc(100% - 10px);
     height: calc(30% - 10px);
@@ -54,4 +56,34 @@ html, body {
 
 .player-stats-item:hover {
     background-color: rgba(0,1,0,0.08);
+}
+
+.player-stock {
+    width: calc(100% - 10px);
+    height: calc(70% - 30px);
+    padding: 5px;
+}
+
+.player-stock-general {
+    display: flex;
+    justify-content: space-between;
+    height: 1em;
+}
+
+.player-stock-list-item {
+    display: flex;
+    justify-content: space-between;
+    border-radius: 5px;
+    padding: 2px;
+    margin-bottom: 2px;
+}
+
+.player-stock-list-item:hover {
+    background-color: rgba(0,1,0,0.08);
+}
+
+.player-stock-list {
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: calc(100% - 1em - 18px);
 }

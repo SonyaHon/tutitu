@@ -7,9 +7,75 @@
  * 
  * Player has a stock - place where he stores hos goods. It has 3 attributes - stock-size, stock-free-space, stock-goods
  * stock-size - maximum capacity of stock (can be changed throw upgrades and levels)
- * stock-free-space - free space of the stock
+ * stock-filled-space - free space of the stock
  * stock-goods - all goods stored in stock tight now
 */
+
+function StockItem(item) {
+    this.el = document.createElement('div');
+    this.el.classList.add('player-stock-list-item');
+    this.name = document.createElement('span');
+    this.name.innerText = item.item.name;
+    this.priceForOne = document.createElement('span');
+    this.priceForOne.innerText = item.item.price;
+    this.amount = document.createElement('span');
+    this.amount.innerText = item.amount;
+    this.el.appendChild(this.name);
+    this.el.appendChild(this.priceForOne);
+    this.el.appendChild(this.amount);
+}
+
+function StockList() {
+    this.stock = [];
+    this.stock_els = [];
+    this.el = document.createElement('div');
+    this.el.classList.add('player-stock-list');
+}
+
+StockList.prototype.update = function(list) {
+    this.stock = list;
+    this.stock_els = [];
+    this.stock.forEach(function(elem) {
+        var item = new StockItem(elem);
+        this.stock_els.push(item);
+    }.bind(this));
+    while(this.el.firstChild) {
+        this.el.removeChild(this.el.firstChild);
+    }
+    this.stock_els.forEach(function(elem) {
+        this.el.appendChild(elem.el);
+    }.bind(this));
+}
+
+function StockData() {
+    this.maxcap = document.createElement('span');
+    this.filledspace = document.createElement('span');
+    this.el = document.createElement('span');
+    this.max_cap_impl = 0;
+    this.filled_space_impl = 0;
+    this.maxcap.innerText = this.max_cap_impl;
+    this.filledspace.innerText = this.filled_space_impl;
+    var sepp = document.createElement('span');
+    sepp.innerText = '/';
+    this.el.appendChild(this.filledspace);
+    this.el.appendChild(sepp);
+    this.el.appendChild(this.maxcap);
+}
+
+StockData.prototype.changeMaxCap = function(val) {
+    this.max_cap_impl = val;
+    this.maxcap.innerText = val;
+}
+
+StockData.prototype.changeFilledSpace = function(val) {
+    this.filled_space_impl = val;
+    this.filledspace.innerText = val;
+}
+
+StockData.prototype.changeValues = function(max, filled) {
+    this.changeMaxCap(max);
+    this.changeFilledSpace(filled);
+}
 
 function StatsItem(lbl, sign) {
     this.sign = sign;
@@ -47,14 +113,16 @@ function PlayerST() {
     this.el.classList.add('player-main');
     this.stats = document.createElement('div');
     this.stats.classList.add('player-stats');
+    this.stats.classList.add('panel');
     this.stock = document.createElement('div');
     this.stock.classList.add('player-stock');
+    this.stock.classList.add('panel');
  
 
     // ----------------------------------------------------- STATS AND ACTIONS ---------------------
-    this.mitem = new StatsItem('money', '$');
-    this.litem = new StatsItem('level', '');
-    this.repitem = new StatsItem('reputation', '¢');
+    this.mitem = new StatsItem('Money', '$');
+    this.litem = new StatsItem('Level', '');
+    this.repitem = new StatsItem('Reputation', '¢');
 
     this.stats.appendChild(this.mitem.el);
     this.stats.appendChild(this.repitem.el);
@@ -90,8 +158,24 @@ function PlayerST() {
 
     // ----------------------------------------------------- STOCK ---------------------------------
     
+    this.stock_general_data = document.createElement('div');
+    this.stock_general_data.classList.add('player-stock-general');
+    var st_name = document.createElement('span');
+    st_name.innerText = "Stock:";
+    this.stock_data = new StockData();
+    this.stock_general_data.appendChild(st_name);
+    this.stock_general_data.appendChild(this.stock_data.el);
+    this.stock.appendChild(this.stock_general_data);
+
+    var hr = document.createElement('hr');
+    this.stock.appendChild(hr);
+
+    this.stock_list = new StockList();
+    this.stock.appendChild(this.stock_list.el);
+
     this.el.appendChild(this.stock);
 
+    // ----------------------------------------------------- Player Data ----------------------------
     this.money = {
         set: function(value) {
             this.__raw_data.money = value;
@@ -139,6 +223,8 @@ function PlayerST() {
     this.stock = {
         set: function(value) {
             this.__raw_data.stock = value;
+            this.stock_data.changeValues(value.max_capacity, value.filled_space);
+            this.stock_list.update(value.items);
         }.bind(this),
         get: function() {
             return this.__raw_data.stock;
