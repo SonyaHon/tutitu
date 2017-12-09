@@ -7,6 +7,9 @@
     transition: background 0.1s linear;
     margin: 10px;
 }
+.Button-small {
+    margin: 2px;
+}
 .Button-Accent {
     color:  #ec407a;
 }

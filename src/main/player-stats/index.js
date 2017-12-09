@@ -19,16 +19,20 @@ function StatsItem(lbl, sign) {
     this.lbl.classList.add('player-stats-item-label');
     this.lbl.innerText = lbl + ':';
     this.value = document.createElement('span');
+    this.value.classList.add('player-stats-item-value');
     this.value.innerText = '' + sign;
+    this.el.appendChild(this.lbl);
+    this.el.appendChild(this.value);
 }
 
 StatsItem.prototype.changeValue = function(value) {
-    this.value.innerText = value + sign;
+    this.value.innerText = value + this.sign;
 }
 
 function PlayerST() {
     this.player_data = null;
     this.listeners = [];
+    this.eventclbs = {};
     // Do not directly touch this
     // Only use public props
     this.__raw_data = {
@@ -40,68 +44,105 @@ function PlayerST() {
     }
 
     this.el = document.createElement('div');
-    this.el.classList.add('player');
+    this.el.classList.add('player-main');
     this.stats = document.createElement('div');
     this.stats.classList.add('player-stats');
     this.stock = document.createElement('div');
     this.stock.classList.add('player-stock');
+ 
 
-    var mitem = new StatsItem('money', '$');
-    var litem = new StatsItem('level', '');
-    var repitem = new StatsItem('reputation', '¢');
+    // ----------------------------------------------------- STATS AND ACTIONS ---------------------
+    this.mitem = new StatsItem('money', '$');
+    this.litem = new StatsItem('level', '');
+    this.repitem = new StatsItem('reputation', '¢');
 
-    this.stats.appendChild(mitem);
-    this.stats.appendChild(repitem);
-    this.stats.appendChild(litem);
+    this.stats.appendChild(this.mitem.el);
+    this.stats.appendChild(this.repitem.el);
+    this.stats.appendChild(this.litem.el);
+
+    this.act_buy = document.createElement('button');
+    this.act_buy.classList.add('Button');
+    this.act_buy.classList.add('Button-small');
+    this.act_buy.innerText = 'Buy Goods';
+    this.act_buy.addEventListener('click', function() {
+        // Mess with buy goods stuff
+    }.bind(this))
+    this.stats.appendChild(this.act_buy);
+
+    this.act_buy_ups = document.createElement('button');
+    this.act_buy_ups.classList.add('Button');
+    this.act_buy_ups.classList.add('Button-small');
+    this.act_buy_ups.innerText = 'Buy Upgrades';
+    this.act_buy_ups.addEventListener('click', function() {
+        // Mess with buy upgrades stuff
+    }.bind(this))
+    this.stats.appendChild(this.act_buy_ups);
+    
+    this.act_sell = document.createElement('button');
+    this.act_sell.classList.add('Button');
+    this.act_sell.classList.add('Button-small');
+    this.act_sell.innerText = 'Sell Goods';
+    this.act_sell.addEventListener('click', function() {
+        // Mess with sell goods stuff
+    }.bind(this))
+    this.stats.appendChild(this.act_sell);
+    this.el.appendChild(this.stats);
+
+    // ----------------------------------------------------- STOCK ---------------------------------
+    
+    this.el.appendChild(this.stock);
 
     this.money = {
         set: function(value) {
             this.__raw_data.money = value;
+            this.mitem.changeValue(value);
             this.fire('prop_money_changed', value);
-        },
+        }.bind(this),
         get: function() {
             return this.__raw_data.money;
-        }
+        }.bind(this)
     }
 
     this.level = {
         set: function(value) {
             this.__raw_data.level = value;
+            this.litem.changeValue(value);
             this.fire('prop_level_changed', value);
-        },
+        }.bind(this),
         get: function() {
             return this.__raw_data.level;
-        }
+        }.bind(this)
     }
 
     this.upgrades = {
         set: function(value) {
             this.__raw_data.upgrades = value;
             this.fire('prop_upgrades_changed', value);
-        },
+        }.bind(this),
         get: function() {
             return this.__raw_data.upgrades;
-        }
+        }.bind(this)
     }
 
     this.reputation = {
         set: function(value) {
             this.__raw_data.reputation = value;
+            this.repitem.changeValue(value);
             this.fire('prop_reputation_changed', value);
-        },
+        }.bind(this),
         get: function() {
             return this.__raw_data.reputation;
-        }
+        }.bind(this)
     }
 
 
     this.stock = {
         set: function(value) {
             this.__raw_data.stock = value;
-        },
+        }.bind(this),
         get: function() {
             return this.__raw_data.stock;
-        }
+        }.bind(this)
     }
 }
 
@@ -112,6 +153,7 @@ PlayerST.prototype.init = function(player_data) {
     this.reputation.set(player_data.reputation);
     this.upgrades.set(player_data.upgrades);
     this.stock.set(player_data.stock);
+    this.add_listener(this);
 }
 
 PlayerST.prototype.add_listener = function(listener) {
@@ -122,9 +164,20 @@ PlayerST.prototype.remove_listener = function(listener) {
     this.listeners.splice(this.listeners.indexOf(listener), 1);
 }
 
+PlayerST.prototype.on = function(name, clb) {
+    if(!this.eventclbs[name]){
+        this.eventclbs[name] = [];
+    }
+    this.eventclbs[name].push(clb);
+}
+
 PlayerST.prototype.fire = function(name, data) {
     this.listeners.forEach(function(listener) {
-        if(listener.on) listener.on(name, data);
+        if(listener.eventclbs && listener.eventclbs[name]) {
+             this.eventclbs[name].forEach(function(elem) {
+                 elem(data);
+             });
+        }
         else throw Error("This lisnere missing on function", listener, name, data);
     }, this);
 }
