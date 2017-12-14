@@ -9,22 +9,7 @@ var current_player_data = {
         reputation: 0,
         upgrades: [],
         stock: {max_capacity: 100, filled_space: 0, items: [
-            {item: ITEMS.tets_item, amount: 2},
-            {item: ITEMS.tets_item, amount: 2},
-            {item: ITEMS.tets_item, amount: 2},
-            {item: ITEMS.tets_item, amount: 2},
-            {item: ITEMS.tets_item, amount: 2},
-            {item: ITEMS.tets_item, amount: 2},
-            {item: ITEMS.tets_item, amount: 2},
-            {item: ITEMS.tets_item, amount: 2},
-            {item: ITEMS.tets_item, amount: 2},
-            {item: ITEMS.tets_item, amount: 2},
-            {item: ITEMS.tets_item, amount: 2},
-            {item: ITEMS.tets_item, amount: 2},
-            {item: ITEMS.tets_item, amount: 2},
-            {item: ITEMS.tets_item, amount: 2},
-            {item: ITEMS.tets_item, amount: 2},
-            {item: ITEMS.tets_item, amount: 2}
+            {item: _ITEMS.getItem('test_item_2'), amount: 2}
         ]}
     }
 }
@@ -33,6 +18,12 @@ var pl = new PlayerST();
 pl.init(current_player_data.player);
 document.getElementById("player").appendChild(pl.el);
 var ctx = new Ctx(document.getElementById("ctxarea"));
+
+
+pl.on('buy_goods', function() {
+    ctx.change_ctx(new BuyCtx("Buy Goods"));
+})
+
 pl.on('prop_money_changed', function(val) {
     current_player_data.player.money = val;
 });

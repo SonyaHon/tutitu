@@ -76,6 +76,7 @@ MenuOfChangeableProps.prototype.submitChanges = function() {
     
 }
 
+
 MenuOfChangeableProps.prototype.changeCtx = function(idx) {
     this.ctx.innerHTML = "";
     this.ctx.appendChild(this.categories[idx].ctx);

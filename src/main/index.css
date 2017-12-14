@@ -106,5 +106,30 @@ html, body {
     position: relative;
     transition: left 0.3s ease-in-out;
     left: 0px;
+    display: flex;
 }
 
+.ctx_template_body {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+.ctx_template_header {
+    width: 100%;
+    height: 30px;
+    text-align: center;
+    font-size: 25px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.ctx_template_content {
+    width: 100%;
+    height: calc(100% - 60px);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}

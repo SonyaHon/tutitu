@@ -25,6 +25,10 @@ function StockItem(item) {
     this.el.appendChild(this.name);
     this.el.appendChild(this.priceForOne);
     this.el.appendChild(this.amount);
+    this.name.title = item.item.description;
+    this.priceForOne.title = "Price: " + item.item.price + '$';
+    this.amount.title = "You have " + item.amount + ' of this item';
+
 }
 
 function StockList() {
@@ -98,11 +102,10 @@ StatsItem.prototype.changeValue = function(value) {
 }
 
 function PlayerST() {
+
+    PObject.call(this);
+
     this.player_data = null;
-    this.listeners = [];
-    this.eventclbs = {};
-    // Do not directly touch this
-    // Only use public props
     this.__raw_data = {
         money: null,
         stock: null,
@@ -136,6 +139,7 @@ function PlayerST() {
     this.act_buy.innerText = 'Buy Goods';
     this.act_buy.addEventListener('click', function() {
         // Mess with buy goods stuff
+         this.fire('buy_goods');
     }.bind(this))
     this.stats.appendChild(this.act_buy);
 
@@ -145,8 +149,7 @@ function PlayerST() {
     this.act_buy_ups.innerText = 'Buy Upgrades';
     this.act_buy_ups.addEventListener('click', function() {
         // Mess with buy upgrades stuff
-
-        document.querySelector('.ctx_body').style.left = '0px';
+        this.fire('buy_upgrades');
     }.bind(this))
     this.stats.appendChild(this.act_buy_ups);
     
@@ -156,12 +159,7 @@ function PlayerST() {
     this.act_sell.innerText = 'Sell Goods';
     this.act_sell.addEventListener('click', function() {
         // Mess with sell goods stuff
-        let elem = document.querySelector('.ctx_body');
-        elem.style.left = (elem.clientWidth + 100) + 'px';
-        console.log('asdasd');
-        setTimeout(function() {
-            console.log('asdasd');
-        }, 100);
+        this.fire('sell_goods');
     }.bind(this))
     this.stats.appendChild(this.act_sell);
     this.el.appendChild(this.stats);
@@ -242,6 +240,9 @@ function PlayerST() {
     }
 }
 
+PlayerST.prototype = Object.create(PObject.prototype);
+PlayerST.prototype.constructor = PlayerST;
+
 PlayerST.prototype.init = function(player_data) {
     this.player_data = player_data;
     this.money.set(player_data.money);
@@ -250,30 +251,4 @@ PlayerST.prototype.init = function(player_data) {
     this.upgrades.set(player_data.upgrades);
     this.stock.set(player_data.stock);
     this.add_listener(this);
-}
-
-PlayerST.prototype.add_listener = function(listener) {
-    this.listeners.push(listener);
-}
-
-PlayerST.prototype.remove_listener = function(listener) {
-    this.listeners.splice(this.listeners.indexOf(listener), 1);
-}
-
-PlayerST.prototype.on = function(name, clb) {
-    if(!this.eventclbs[name]){
-        this.eventclbs[name] = [];
-    }
-    this.eventclbs[name].push(clb);
-}
-
-PlayerST.prototype.fire = function(name, data) {
-    this.listeners.forEach(function(listener) {
-        if(listener.eventclbs && listener.eventclbs[name]) {
-             this.eventclbs[name].forEach(function(elem) {
-                 elem(data);
-             });
-        }
-        else throw Error("This lisnere missing on function", listener, name, data);
-    }, this);
 }
