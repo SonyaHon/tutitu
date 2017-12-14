@@ -32,6 +32,7 @@ var current_player_data = {
 var pl = new PlayerST();
 pl.init(current_player_data.player);
 document.getElementById("player").appendChild(pl.el);
+var ctx = new Ctx(document.getElementById("ctxarea"));
 pl.on('prop_money_changed', function(val) {
     current_player_data.player.money = val;
 });

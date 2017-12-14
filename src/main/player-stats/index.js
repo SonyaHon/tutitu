@@ -1,3 +1,5 @@
+import { setTimeout } from "timers";
+
 /*
  * Player has 3 stats - money, reputation, upgrades and level
  * money - ur money if u are in red, u lost. U can spend them to buy stuff and upgrades
@@ -143,6 +145,8 @@ function PlayerST() {
     this.act_buy_ups.innerText = 'Buy Upgrades';
     this.act_buy_ups.addEventListener('click', function() {
         // Mess with buy upgrades stuff
+
+        document.querySelector('.ctx_body').style.left = '0px';
     }.bind(this))
     this.stats.appendChild(this.act_buy_ups);
     
@@ -152,6 +156,12 @@ function PlayerST() {
     this.act_sell.innerText = 'Sell Goods';
     this.act_sell.addEventListener('click', function() {
         // Mess with sell goods stuff
+        let elem = document.querySelector('.ctx_body');
+        elem.style.left = (elem.clientWidth + 100) + 'px';
+        console.log('asdasd');
+        setTimeout(function() {
+            console.log('asdasd');
+        }, 100);
     }.bind(this))
     this.stats.appendChild(this.act_sell);
     this.el.appendChild(this.stats);
